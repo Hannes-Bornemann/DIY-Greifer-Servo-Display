@@ -1,0 +1,9 @@
+in Taskleiste ganz links auf "Explorer"  clicken
+In der gleichen Gliederungsebene wie "UNTITLED (WORKSPACE)" und "OUTLINE" befindet sich der Menüpunkt "TIMELINE"
+"TIMELINE" aufklappen
+alle mit "File Saved" benannten Einträge könnnen wiederhergestellt werden
+Rechtscklick auf den gewünschten Eintrag
+"Restore Contents" auswählen
+in Taskleiste (links) zu "Source Control" wechseln
+Änderung (Restoration) der Datei stagen
+Änderung committen
