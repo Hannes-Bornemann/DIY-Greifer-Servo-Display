@@ -1,0 +1,5 @@
+in Tab "Source Code" View "Source Control Repository" einblenden
+alle Projekte die behalten werden sollen auf andere Branches laden
+(in "Source Control Repositiories" einen anderen als den zu Löschenden Branch laden)
+auf 3 Punkte clicken -> Branch -> Delete Branch
+gewünschten zu löschenden Branch auswählen
