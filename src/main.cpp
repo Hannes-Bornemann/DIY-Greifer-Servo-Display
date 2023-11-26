@@ -149,11 +149,12 @@ void loop()
 
     if (buttonState == 0) // Knopf nicht gedrückt, Greifer offen
     {
-        Serial.print("in buttonState == 0!!!");
+        Serial.print("in buttonState == 0");
         gripperClose(); // Greifer schließen
         gripperState = 1;
         closings++;
 
         delay(15000); // closing time
     }
+    // new feature for git check
 }
