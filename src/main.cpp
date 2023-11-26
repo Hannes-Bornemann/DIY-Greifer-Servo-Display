@@ -156,5 +156,4 @@ void loop()
 
         delay(15000); // closing time
     }
-    // new feature for git check
 }
