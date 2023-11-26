@@ -155,5 +155,6 @@ void loop()
         closings++;
 
         delay(15000); // closing time
+        // new features number 2
     }
 }
