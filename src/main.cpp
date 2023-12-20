@@ -64,8 +64,9 @@ void gripperClose()
     // myservo0.write(180);
     // myservo1.write(180);
 
-    myservo0.writeMicroseconds(2000);
-    myservo1.writeMicroseconds(2000);
+    myservo0.writeMicroseconds(1700);
+    myservo1.writeMicroseconds(1700);
+    Serial.println("close");
 }
 
 void DrawStateDisplay()
