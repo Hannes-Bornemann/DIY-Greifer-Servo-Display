@@ -20,7 +20,7 @@ int minutes;
 
 // Initialisieren des Displays
 SSD1306Wire display(0x3c, SDA, SCL);
-// default: SCL : GPIO22; SDA: GPIO21
+; // default: SCL : GPIO22; SDA: GPIO21
 
 void setup()
 {
@@ -46,9 +46,13 @@ void setup()
 
 void gripperOpen()
 {
+    // myservo0.write(0); //  range 0 - 180
+    // myservo1.write(0);
+
     myservo0.writeMicroseconds(1000); //  range:  500-1500 (negative turning direction, 500 = maximum torque, 1500 = torque 0)
     myservo1.writeMicroseconds(1000); //          1500-2500 (positive turning direction, 1500 = torque 0, 2500 = maximum torque)
     delay(500);
+
     myservo0.writeMicroseconds(1500); // turn off servo
     myservo1.writeMicroseconds(1500);
     // delay(500);
@@ -57,14 +61,19 @@ void gripperOpen()
 
 void gripperClose()
 {
-    myservo0.writeMicroseconds(2600);
-    myservo1.writeMicroseconds(1600);
+    // myservo0.write(180);
+    // myservo1.write(180);
+
+    myservo0.writeMicroseconds(1700);
+    myservo1.writeMicroseconds(1700);
+    Serial.println("close");
 }
 
 void DrawStateDisplay()
 {
     // clear the display
     display.clear();
+    microsec = millis();
     // Text
     display.setTextAlignment(TEXT_ALIGN_LEFT);
     display.setFont(ArialMT_Plain_16);
@@ -80,6 +89,7 @@ void DrawStateDisplay()
 
 void loop()
 {
+    minutes = microsec / 60000;
     /*
     DrawStateDisplay();
     gripperClose();
@@ -89,37 +99,35 @@ void loop()
     delay(1000);
     */
     /*
-    // buttonPinTest
-    DrawStateDisplay();
+    // buttonPinTests
     buttonState = digitalRead(buttonPin);
-    while (buttonState == 0) // Taster nicht gedrückt
+    if (buttonState == 1)
     {
-        myservo0.writeMicroseconds(1500); // servo stromlos
-        myservo1.writeMicroseconds(1500);
-        Serial.println("open");
-        buttonState = digitalRead(buttonPin);
+        gripperClose();
     }
-    delay(1);                // sonst wird folgende while schleife iwie einmal übersprungen
-    while (buttonState != 0) // Taster gedrückt
+    else
     {
-        myservo0.writeMicroseconds(1600); // servo schließt
-        myservo1.writeMicroseconds(1600);
-        Serial.println("close");
-        buttonState = digitalRead(buttonPin);
+        gripperOpen();
     }
-    myservo0.writeMicroseconds(1000);
-    myservo1.writeMicroseconds(1000);
-    delay(500);
     */
 
     // Verschleißtest
-    microsec = millis();
-    minutes = microsec / 60000;
+    Serial.print("closings: ");
+    Serial.print(closings);
+    Serial.print("  failures: ");
+    Serial.println(failures);
+
+    delay(500);
     buttonState = digitalRead(buttonPin);
+    Serial.print("buttonState = ");
+    Serial.println(buttonState);
+
     DrawStateDisplay();
+
     if (buttonState != gripperState)
     {
         failures++;
+        Serial.print("New failure");
         if (failures > 2)
         {
             Serial.print("End Program ");
@@ -135,15 +143,19 @@ void loop()
 
     if (buttonState == 1) // Knopf gedrückt, Greifer geschlossen
     {
-        gripperOpen();
+        Serial.print("in buttonState == 1");
+        gripperOpen(); // Greifer öffnen
         gripperState = 0;
     }
 
     if (buttonState == 0) // Knopf nicht gedrückt, Greifer offen
     {
-        gripperClose();
+        Serial.print("in buttonState == 0");
+        gripperClose(); // Greifer schließen
         gripperState = 1;
         closings++;
-        delay(10000); // closing time
+
+        delay(15000); // closing time
     }
+    // final git upload
 }
