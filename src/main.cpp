@@ -1,3 +1,4 @@
+
 #include <ESP32Servo.h>
 #include <Arduino.h>
 #include <Wire.h>
@@ -46,8 +47,8 @@ void setup()
 
 void gripperOpen()
 {
-    myservo0.writeMicroseconds(1000); //  range:  500-1500 (negative turning direction, 500 = maximum torque, 1500 = torque 0)
-    myservo1.writeMicroseconds(1000); //          1500-2500 (positive turning direction, 1500 = torque 0, 2500 = maximum torque)
+    myservo0.writeMicroseconds(1800); //  range:  500-1500 (negative turning direction, 500 = maximum torque, 1500 = torque 0)
+    myservo1.writeMicroseconds(1800); //          1500-2500 (positive turning direction, 1500 = torque 0, 2500 = maximum torque)
     delay(500);
     myservo0.writeMicroseconds(1500); // turn off servo
     myservo1.writeMicroseconds(1500);
@@ -57,8 +58,8 @@ void gripperOpen()
 
 void gripperClose()
 {
-    myservo0.writeMicroseconds(2600);
-    myservo1.writeMicroseconds(1600);
+    myservo0.writeMicroseconds(1245);
+    myservo1.writeMicroseconds(1245);
 }
 
 void DrawStateDisplay()
@@ -102,13 +103,13 @@ void loop()
     delay(1);                // sonst wird folgende while schleife iwie einmal übersprungen
     while (buttonState != 0) // Taster gedrückt
     {
-        myservo0.writeMicroseconds(1600); // servo schließt
-        myservo1.writeMicroseconds(1600);
+        myservo0.writeMicroseconds(1020); // servo öffnet 1720 bis 2020=höchste Kraft (300 range) 50% bei 1170, dann 1A Stromverbrauch
+        myservo1.writeMicroseconds(1020);   // servo schließt 1020 bis 1320=niedrigste (300 range)
         Serial.println("close");
         buttonState = digitalRead(buttonPin);
     }
-    myservo0.writeMicroseconds(1000);
-    myservo1.writeMicroseconds(1000);
+    myservo0.writeMicroseconds(1800);
+    myservo1.writeMicroseconds(1800);
     delay(500);
     */
 
