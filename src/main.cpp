@@ -38,10 +38,20 @@ void setup()
     ESP32PWM::allocateTimer(3);
     myservo0.setPeriodHertz(50); // standard 50 hz servo
     myservo1.setPeriodHertz(50);
-    myservo0.attach(servo0Pin, 500, 2500); // using min/max of 500us and 2500us
-                                           // different servos may require different min/max settings
-                                           // for an accurate 0 to 180 sweep
+    myservo0.attach(servo0Pin, 500, 2500);
     myservo1.attach(servo1Pin, 500, 2500);
+    // "different servos may require different min/max settings for an accurate 0 to 180 sweep"
+    // min/max für alle Servos gleich gelassen, nur aufgerufenen Wert verändert:
+    // myservo.writeMicroseconds(X);
+    // Servo 0: positive Drehung:
+    //          negative Drehung:
+    // Servo 1: positive Drehung: 1550 <= X <= 1950 (1550 langsamste)
+    //          negative Drehung: 1000 <= X <= 1400 (1400 langsamste)
+    // Servo 2: positive Drehung: 1020 <= X <= 1320 (1320 langsamste)
+    //          negative Drehung: 1720 <= X <= 2020 (1720 langsamste)
+    // Servo 3: positive Drehung: 1550 <= X <= 2250 (1540 langsamste) Range: 700
+    //          negative Drehung: 750  <= X <= 1450 (1450 langsamste)
+
     pinMode(buttonPin, INPUT_PULLDOWN);
 }
 
@@ -79,41 +89,42 @@ void DrawStateDisplay()
     display.display();
 }
 
-void loop()
-{
-    /*
-    DrawStateDisplay();
-    gripperClose();
-    closings++;
-    delay(1000);
-    gripperOpen();
-    delay(1000);
-    */
-    /*
-    // buttonPinTest
-    DrawStateDisplay();
-    buttonState = digitalRead(buttonPin);
-    while (buttonState == 0) // Taster nicht gedrückt
-    {
-        myservo0.writeMicroseconds(1500); // servo stromlos
-        myservo1.writeMicroseconds(1500);
-        Serial.println("open");
-        buttonState = digitalRead(buttonPin);
-    }
-    delay(1);                // sonst wird folgende while schleife iwie einmal übersprungen
-    while (buttonState != 0) // Taster gedrückt
-    {
-        myservo0.writeMicroseconds(1020); // servo öffnet 1720 bis 2020=höchste Kraft (300 range) 50% bei 1170, dann 1A Stromverbrauch
-        myservo1.writeMicroseconds(1020);   // servo schließt 1020 bis 1320=niedrigste (300 range)
-        Serial.println("close");
-        buttonState = digitalRead(buttonPin);
-    }
-    myservo0.writeMicroseconds(1800);
-    myservo1.writeMicroseconds(1800);
-    delay(500);
-    */
+// int getMicrosec(int servotyp, float percentage)
+// {
+//     int minimum;
+//     int maximum;
+//     if (servotyp == 0)
+//     {
+//         minimum = min0;
+//         maximum = max0;
+//     }
+//     if (servotyp == 1)
+//     {
+//         minimum = min1;
+//         maximum = max1;
+//     }
+//     if (servotyp == 2)
+//     {
+//         minimum = min2;
+//         maximum = max2;
+//     }
+//     int range = (maximum - minimum) / 2;
+//     int microsec = minimum + range + percentage / 100.0f * range;
+//     return microsec;
+// }
 
-    // Verschleißtest
+// void testRange()
+// {
+//     for (int i = 0; i < max0; i++)
+//     {
+//         myservo0.writeMicroseconds(i * 100);
+//         Serial.println(i * 100);
+//     }
+//     delay(1000);
+// }
+
+void verschleisstest()
+{
     microsec = millis();
     minutes = microsec / 60000;
     buttonState = digitalRead(buttonPin);
@@ -147,4 +158,38 @@ void loop()
         closings++;
         delay(10000); // closing time
     }
+}
+
+void loop()
+{
+    /*
+    DrawStateDisplay();
+    gripperClose();
+    closings++;
+    delay(1000);
+    gripperOpen();
+    delay(1000);
+    */
+    // buttonPinTest
+    DrawStateDisplay();
+    buttonState = digitalRead(buttonPin);
+    while (buttonState == 0) // Taster nicht gedrückt
+    {
+        myservo0.writeMicroseconds(1500); // servo stromlos
+        // myservo1.writeMicroseconds(1500);
+        Serial.println("open");
+        buttonState = digitalRead(buttonPin);
+    }
+    delay(1);                // sonst wird folgende while schleife iwie einmal übersprungen
+    while (buttonState != 0) // Taster gedrückt
+    {
+        myservo0.writeMicroseconds(500); // servo öffnet 1720 bis 2020=höchste Kraft (300 range) 50% bei 1170, dann 1A Stromverbrauch
+        // myservo1.writeMicroseconds(setMicrosec); // servo schließt 1020 bis 1320=niedrigste (300 range)
+        Serial.println("close");
+        // Serial.println(setMicrosec);
+        buttonState = digitalRead(buttonPin);
+    }
+    // myservo0.writeMicroseconds(1800);
+    // myservo1.writeMicroseconds(1800);
+    // delay(500);
 }
