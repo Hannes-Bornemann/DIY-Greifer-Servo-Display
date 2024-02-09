@@ -58,15 +58,25 @@ void setup()
     //          negative Drehung: 1720 <= X <= 2020 (1720 langsamste)
     // Servo 3: positive Drehung: 1550 <= X <= 2250 (1540 langsamste) Range: 700
     //          negative Drehung: 750  <= X <= 1450 (1450 langsamste)
-    // positive Drehung:
-    // 10%   Servo 0: 1600
-    //      Servo 1: 1590
-    //      Servo 2: 1290
-    //      Servo 3: 1620
-    // 20%   Servo 0:
-    //      Servo 1:
-    //      Servo 2:
-    //      Servo 3:
+
+    // negative Drehung: (öffnen)
+    // 10%  Servo 0: 1400
+    //      Servo 1: 1400 (geändert, sonst zu schnell!)
+    //      Servo 2: 1750
+    //      Servo 3: 1380
+
+    // positive Drehung: (schliessen)
+    // 10%
+    // myservo0.writeMicroseconds(1600); // servo schliessen
+    // myservo1.writeMicroseconds(1590);
+    // myservo2.writeMicroseconds(1290);
+    // myservo3.writeMicroseconds(1620);
+    // 20%
+    // myservo0.writeMicroseconds(1700); // servo schliessen
+    // myservo1.writeMicroseconds(1630);
+    // myservo2.writeMicroseconds(1260);
+    // myservo3.writeMicroseconds(1690);
+
     pinMode(buttonPin, INPUT_PULLDOWN);
 }
 
@@ -110,19 +120,13 @@ void DisplayVergleich(int perc, int closing)
     display.setFont(ArialMT_Plain_16);
     // Text
     display.setTextAlignment(TEXT_ALIGN_LEFT);
-    display.drawString(0, 0, "Power (%): ");
-    // display.setTextAlignment(TEXT_ALIGN_RIGHT);
-    display.print(perc);
+    display.drawString(0, 0, "Power (%): " + String(perc));
 
     display.setTextAlignment(TEXT_ALIGN_LEFT);
-    display.drawString(0, 16, "closings of 500: ");
-    display.setTextAlignment(TEXT_ALIGN_RIGHT);
-    display.drawString(0, 0, String(closing));
+    display.drawString(0, 16, "closing " + String(closing) + "/500");
 
     display.setTextAlignment(TEXT_ALIGN_LEFT);
-    display.drawString(0, 48, "Time[min]:");
-    display.setTextAlignment(TEXT_ALIGN_RIGHT);
-    display.drawString(0, 48, String(minutes));
+    display.drawString(0, 32, "Time[min]:" + String(minutes));
 
     // write the buffer to the display
     display.display();
@@ -205,18 +209,32 @@ void Vergleichstest()
     {
         microsec = millis();
         minutes = microsec / 60000;
-        DisplayVergleich(10, i);
+        DisplayVergleich(20, i);
+
+        myservo0.writeMicroseconds(1400); // servo öffnen
+        myservo1.writeMicroseconds(1400);
+        myservo2.writeMicroseconds(1750);
+        myservo3.writeMicroseconds(1380);
+        delay(500);
 
         myservo0.writeMicroseconds(1500); // servo stromlos
         myservo1.writeMicroseconds(1500);
         myservo2.writeMicroseconds(1500);
         myservo3.writeMicroseconds(1500);
-        delay(1000);
-        myservo0.writeMicroseconds(1600);
-        myservo1.writeMicroseconds(1590);
-        myservo2.writeMicroseconds(1290);
-        myservo3.writeMicroseconds(1620);
-        delay(1000);
+        delay(500);
+
+        myservo0.writeMicroseconds(1700); // servo schliessen
+        myservo1.writeMicroseconds(1630);
+        myservo2.writeMicroseconds(1260);
+        myservo3.writeMicroseconds(1690);
+        delay(10000);
+    }
+    while (true) // Program stops
+    {
+        myservo0.writeMicroseconds(1500);
+        myservo1.writeMicroseconds(1500);
+        myservo2.writeMicroseconds(1500);
+        myservo3.writeMicroseconds(1500);
     }
 }
 void loop()
