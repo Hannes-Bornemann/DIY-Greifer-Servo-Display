@@ -67,15 +67,20 @@ void setup()
 
     // positive Drehung: (schliessen)
     // 10%
-    // myservo0.writeMicroseconds(1600); // servo schliessen
-    // myservo1.writeMicroseconds(1590);
-    // myservo2.writeMicroseconds(1290);
-    // myservo3.writeMicroseconds(1620);
+    // myservo0.writeMicroseconds(1600); // servo schliessen +100
+    // myservo1.writeMicroseconds(1590);                     +40
+    // myservo2.writeMicroseconds(1290);                     -30
+    // myservo3.writeMicroseconds(1620);                     +70
     // 20%
     // myservo0.writeMicroseconds(1700); // servo schliessen
     // myservo1.writeMicroseconds(1630);
     // myservo2.writeMicroseconds(1260);
     // myservo3.writeMicroseconds(1690);
+    // 30%
+    // myservo0.writeMicroseconds(1800); // servo schliessen
+    // myservo1.writeMicroseconds(1670);
+    // myservo2.writeMicroseconds(1230);
+    // myservo3.writeMicroseconds(1760);
 
     pinMode(buttonPin, INPUT_PULLDOWN);
 }
@@ -207,9 +212,10 @@ void Vergleichstest()
 {
     for (int i = 0; i <= 500; i++)
     {
+        int percentage = 20;
         microsec = millis();
         minutes = microsec / 60000;
-        DisplayVergleich(20, i);
+        DisplayVergleich(percentage, i);
 
         myservo0.writeMicroseconds(1400); // servo öffnen
         myservo1.writeMicroseconds(1400);
@@ -223,10 +229,10 @@ void Vergleichstest()
         myservo3.writeMicroseconds(1500);
         delay(500);
 
-        myservo0.writeMicroseconds(1700); // servo schliessen
-        myservo1.writeMicroseconds(1630);
-        myservo2.writeMicroseconds(1260);
-        myservo3.writeMicroseconds(1690);
+        myservo0.writeMicroseconds(1500 + 0.1 * i * 100); // servo schliessen
+        myservo1.writeMicroseconds(1550 + 0.1 * i * 40);
+        myservo2.writeMicroseconds(1310 - 0.1 * i * 30);
+        myservo3.writeMicroseconds(1550 + 0.1 * i * 70);
         delay(10000);
     }
     while (true) // Program stops
