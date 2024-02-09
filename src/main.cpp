@@ -6,11 +6,16 @@
 
 Servo myservo0; // create servo object to control a servo
 Servo myservo1;
+Servo myservo2;
+Servo myservo3;
 
 // int pos = 0; // servo position (0=open , 1=closed)
 
-int servo0Pin = 18;
-int servo1Pin = 19;
+int servo0Pin = 2;
+int servo1Pin = 4;
+int servo2Pin = 18;
+int servo3Pin = 19;
+
 int buttonPin = 12;
 int buttonState = 0;  //  0=unpressed
 int gripperState = 0; //  0=open
@@ -40,18 +45,28 @@ void setup()
     myservo1.setPeriodHertz(50);
     myservo0.attach(servo0Pin, 500, 2500);
     myservo1.attach(servo1Pin, 500, 2500);
+    myservo2.attach(servo2Pin, 500, 2500);
+    myservo3.attach(servo3Pin, 500, 2500);
     // "different servos may require different min/max settings for an accurate 0 to 180 sweep"
     // min/max für alle Servos gleich gelassen, nur aufgerufenen Wert verändert:
     // myservo.writeMicroseconds(X);
-    // Servo 0: positive Drehung:
-    //          negative Drehung:
-    // Servo 1: positive Drehung: 1550 <= X <= 1950 (1550 langsamste)
+    // Servo 0: positive Drehung: 1500 <= X <= 2500 (1500 langsamste) Range: 1000
+    //          negative Drehung: 500  <= X <= 1500 (1500 langsamste)
+    // Servo 1: positive Drehung: 1550 <= X <= 1950 (1550 langsamste) Range: 400
     //          negative Drehung: 1000 <= X <= 1400 (1400 langsamste)
-    // Servo 2: positive Drehung: 1020 <= X <= 1320 (1320 langsamste)
+    // Servo 2: positive Drehung: 1020 <= X <= 1320 (1320 langsamste) Range: 300
     //          negative Drehung: 1720 <= X <= 2020 (1720 langsamste)
     // Servo 3: positive Drehung: 1550 <= X <= 2250 (1540 langsamste) Range: 700
     //          negative Drehung: 750  <= X <= 1450 (1450 langsamste)
-
+    // positive Drehung:
+    // 10%   Servo 0: 1600
+    //      Servo 1: 1590
+    //      Servo 2: 1290
+    //      Servo 3: 1620
+    // 20%   Servo 0:
+    //      Servo 1:
+    //      Servo 2:
+    //      Servo 3:
     pinMode(buttonPin, INPUT_PULLDOWN);
 }
 
@@ -85,6 +100,30 @@ void DrawStateDisplay()
     display.drawString(60, 32, String(failures));
     display.drawString(0, 48, "Time[min]:");
     display.drawString(75, 48, String(minutes));
+    // write the buffer to the display
+    display.display();
+}
+void DisplayVergleich(int perc, int closing)
+{
+    // clear the display
+    display.clear();
+    display.setFont(ArialMT_Plain_16);
+    // Text
+    display.setTextAlignment(TEXT_ALIGN_LEFT);
+    display.drawString(0, 0, "Power (%): ");
+    // display.setTextAlignment(TEXT_ALIGN_RIGHT);
+    display.print(perc);
+
+    display.setTextAlignment(TEXT_ALIGN_LEFT);
+    display.drawString(0, 16, "closings of 500: ");
+    display.setTextAlignment(TEXT_ALIGN_RIGHT);
+    display.drawString(0, 0, String(closing));
+
+    display.setTextAlignment(TEXT_ALIGN_LEFT);
+    display.drawString(0, 48, "Time[min]:");
+    display.setTextAlignment(TEXT_ALIGN_RIGHT);
+    display.drawString(0, 48, String(minutes));
+
     // write the buffer to the display
     display.display();
 }
@@ -160,8 +199,29 @@ void verschleisstest()
     }
 }
 
+void Vergleichstest()
+{
+    for (int i = 0; i <= 500; i++)
+    {
+        microsec = millis();
+        minutes = microsec / 60000;
+        DisplayVergleich(10, i);
+
+        myservo0.writeMicroseconds(1500); // servo stromlos
+        myservo1.writeMicroseconds(1500);
+        myservo2.writeMicroseconds(1500);
+        myservo3.writeMicroseconds(1500);
+        delay(1000);
+        myservo0.writeMicroseconds(1600);
+        myservo1.writeMicroseconds(1590);
+        myservo2.writeMicroseconds(1290);
+        myservo3.writeMicroseconds(1620);
+        delay(1000);
+    }
+}
 void loop()
 {
+    Vergleichstest();
     /*
     DrawStateDisplay();
     gripperClose();
@@ -170,25 +230,31 @@ void loop()
     gripperOpen();
     delay(1000);
     */
+
     // buttonPinTest
-    DrawStateDisplay();
-    buttonState = digitalRead(buttonPin);
-    while (buttonState == 0) // Taster nicht gedrückt
-    {
-        myservo0.writeMicroseconds(1500); // servo stromlos
-        // myservo1.writeMicroseconds(1500);
-        Serial.println("open");
-        buttonState = digitalRead(buttonPin);
-    }
-    delay(1);                // sonst wird folgende while schleife iwie einmal übersprungen
-    while (buttonState != 0) // Taster gedrückt
-    {
-        myservo0.writeMicroseconds(500); // servo öffnet 1720 bis 2020=höchste Kraft (300 range) 50% bei 1170, dann 1A Stromverbrauch
-        // myservo1.writeMicroseconds(setMicrosec); // servo schließt 1020 bis 1320=niedrigste (300 range)
-        Serial.println("close");
-        // Serial.println(setMicrosec);
-        buttonState = digitalRead(buttonPin);
-    }
+    // DrawStateDisplay();
+    // buttonState = digitalRead(buttonPin);
+    // while (buttonState == 0) // Taster nicht gedrückt
+    // {
+    //     myservo0.writeMicroseconds(1500); // servo stromlos
+    //     myservo1.writeMicroseconds(1500);
+    //     myservo2.writeMicroseconds(1500);
+    //     myservo3.writeMicroseconds(1500);
+    //     Serial.println("open");
+    //     buttonState = digitalRead(buttonPin);
+    // }
+    // delay(1);                // sonst wird folgende while schleife iwie einmal übersprungen
+    // while (buttonState != 0) // Taster gedrückt
+    // {
+    //     myservo0.writeMicroseconds(1600);
+    //     myservo1.writeMicroseconds(1590);
+    //     myservo2.writeMicroseconds(1290);
+    //     myservo3.writeMicroseconds(1620);
+
+    //     Serial.println("close");
+    //     // Serial.println(setMicrosec);
+    //     buttonState = digitalRead(buttonPin);
+    // }
     // myservo0.writeMicroseconds(1800);
     // myservo1.writeMicroseconds(1800);
     // delay(500);
