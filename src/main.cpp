@@ -66,21 +66,26 @@ void setup()
     //      Servo 3: 1380
 
     // positive Drehung: (schliessen)
-    // 10%
-    // myservo0.writeMicroseconds(1600); // servo schliessen +100
-    // myservo1.writeMicroseconds(1590);                     +40
-    // myservo2.writeMicroseconds(1290);                     -30
-    // myservo3.writeMicroseconds(1620);                     +70
+    // 10%                                                          Versagt?
+    // myservo0.writeMicroseconds(1600); // servo schliessen +100   Nein
+    // myservo1.writeMicroseconds(1590);                     +40    Nein
+    // myservo2.writeMicroseconds(1290);                     -30    Nein
+    // myservo3.writeMicroseconds(1620);                     +70    Nein
     // 20%
-    // myservo0.writeMicroseconds(1700); // servo schliessen
-    // myservo1.writeMicroseconds(1630);
-    // myservo2.writeMicroseconds(1260);
-    // myservo3.writeMicroseconds(1690);
+    // myservo0.writeMicroseconds(1700); // servo schliessen        Nein
+    // myservo1.writeMicroseconds(1630);                            Nein
+    // myservo2.writeMicroseconds(1260);                            Nein
+    // myservo3.writeMicroseconds(1690);                            Nein
     // 30%
-    // myservo0.writeMicroseconds(1800); // servo schliessen
-    // myservo1.writeMicroseconds(1670);
-    // myservo2.writeMicroseconds(1230);
-    // myservo3.writeMicroseconds(1760);
+    // myservo0.writeMicroseconds(1800); // servo schliessen       Nein
+    // myservo1.writeMicroseconds(1670);                           Versagt nach ca. 100 Zyklen (überhitzt)
+    // myservo2.writeMicroseconds(1230);                           Nein
+    // myservo3.writeMicroseconds(1760);                           Nein
+    // 40%
+    // myservo0.writeMicroseconds(1900); // servo schliessen
+    // myservo1.writeMicroseconds(1710);
+    // myservo2.writeMicroseconds(1200);
+    // myservo3.writeMicroseconds(1830);
 
     pinMode(buttonPin, INPUT_PULLDOWN);
 }
@@ -118,7 +123,7 @@ void DrawStateDisplay()
     // write the buffer to the display
     display.display();
 }
-void DisplayVergleich(int perc, int closing)
+void DisplayVergleich(int perc, int closing, int servo0, int servo1, int servo2, int servo3)
 {
     // clear the display
     display.clear();
@@ -126,12 +131,10 @@ void DisplayVergleich(int perc, int closing)
     // Text
     display.setTextAlignment(TEXT_ALIGN_LEFT);
     display.drawString(0, 0, "Power (%): " + String(perc));
-
-    display.setTextAlignment(TEXT_ALIGN_LEFT);
     display.drawString(0, 16, "closing " + String(closing) + "/500");
-
-    display.setTextAlignment(TEXT_ALIGN_LEFT);
     display.drawString(0, 32, "Time[min]:" + String(minutes));
+    display.setFont(ArialMT_Plain_10); // Reduce text size
+    display.drawString(0, 50, String(servo0) + "|" + String(servo1) + "|" + String(servo2) + "|" + String(servo3));
 
     // write the buffer to the display
     display.display();
@@ -212,10 +215,16 @@ void Vergleichstest()
 {
     for (int i = 0; i <= 500; i++)
     {
-        int percentage = 20;
+        int percentage = 40;
         microsec = millis();
         minutes = microsec / 60000;
-        DisplayVergleich(percentage, i);
+
+        int servo0value = 1500 + 0.1 * percentage * 100;
+        int servo1value = 1550 + 0.1 * percentage * 40;
+        int servo2value = 1320 - 0.1 * percentage * 30;
+        int servo3value = 1550 + 0.1 * percentage * 70;
+
+        DisplayVergleich(percentage, i, servo0value, servo1value, servo2value, servo3value);
 
         myservo0.writeMicroseconds(1400); // servo öffnen
         myservo1.writeMicroseconds(1400);
@@ -229,10 +238,10 @@ void Vergleichstest()
         myservo3.writeMicroseconds(1500);
         delay(500);
 
-        myservo0.writeMicroseconds(1500 + 0.1 * i * 100); // servo schliessen
-        myservo1.writeMicroseconds(1550 + 0.1 * i * 40);
-        myservo2.writeMicroseconds(1310 - 0.1 * i * 30);
-        myservo3.writeMicroseconds(1550 + 0.1 * i * 70);
+        myservo0.writeMicroseconds(servo0value); // servo schliessen
+        myservo1.writeMicroseconds(servo1value);
+        myservo2.writeMicroseconds(servo2value);
+        myservo3.writeMicroseconds(servo3value);
         delay(10000);
     }
     while (true) // Program stops
