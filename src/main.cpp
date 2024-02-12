@@ -88,7 +88,7 @@ void setup()
     // myservo3.writeMicroseconds(1830);                            Versagt nach ca. 140 Zyklen (Servo wird laut, bewegt sich nicht mehr zurück)
     // 50%
     //                                   // servo schliessen
-    // myservo2.writeMicroseconds(1170);
+    // myservo2.writeMicroseconds(1170);                            Versagt nach ca. 70 Zyklen (Servo bleibt stehen)
     //
     //
 
