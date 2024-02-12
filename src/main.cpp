@@ -77,15 +77,20 @@ void setup()
     // myservo2.writeMicroseconds(1260);                            Nein
     // myservo3.writeMicroseconds(1690);                            Nein
     // 30%
-    // myservo0.writeMicroseconds(1800); // servo schliessen       Nein
-    // myservo1.writeMicroseconds(1670);                           Versagt nach ca. 100 Zyklen (überhitzt)
-    // myservo2.writeMicroseconds(1230);                           Nein
-    // myservo3.writeMicroseconds(1760);                           Nein
+    // myservo0.writeMicroseconds(1800); // servo schliessen        Nein
+    // myservo1.writeMicroseconds(1670);                            Versagt nach ca. 100 Zyklen (überhitzt)
+    // myservo2.writeMicroseconds(1230);                            Nein
+    // myservo3.writeMicroseconds(1760);                            Nein
     // 40%
-    // myservo0.writeMicroseconds(1900); // servo schliessen
-    // myservo1.writeMicroseconds(1710);
-    // myservo2.writeMicroseconds(1200);
-    // myservo3.writeMicroseconds(1830);
+    // myservo0.writeMicroseconds(1900); // servo schliessen        Versagt nach ca. 65 Zyklen (Zahnrad am Motor hat sich gelöst)
+    //
+    // myservo2.writeMicroseconds(1200);                            Nein
+    // myservo3.writeMicroseconds(1830);                            Versagt nach ca. 140 Zyklen (Servo wird laut, bewegt sich nicht mehr zurück)
+    // 50%
+    //                                   // servo schliessen
+    // myservo2.writeMicroseconds(1170);
+    //
+    //
 
     pinMode(buttonPin, INPUT_PULLDOWN);
 }
@@ -215,7 +220,7 @@ void Vergleichstest()
 {
     for (int i = 0; i <= 500; i++)
     {
-        int percentage = 40;
+        int percentage = 50;
         microsec = millis();
         minutes = microsec / 60000;
 
