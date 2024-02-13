@@ -144,51 +144,6 @@ void DisplayVergleich(int perc, int closing, int servo0, int servo1, int servo2,
     // write the buffer to the display
     display.display();
 }
-void buttonTest_display(int value_rest, int value_open, int value_close, int button_state)
-{
-    display.clear();
-    display.setFont(ArialMT_Plain_16);
-    display.setTextAlignment(TEXT_ALIGN_LEFT);
-    display.drawString(0, 0, "Value rest:  " + String(value_rest));
-    display.drawString(0, 16, "Value open: " + String(value_open));
-    display.drawString(0, 32, "Value close: " + String(value_close));
-
-    display.drawString(0, 48, "Button State: " + String(button_state));
-    display.display();
-}
-
-void buttonTest(int value_rest, int value_open, int value_close)
-{
-    // Werte zum Bestimmen der Greifkraft.
-    // value_rest = 1500
-    // Servo0:  value_open = 1400
-    //          value_close = 1800
-    // Servo1:  value_open = 1360
-    //          value_close = 1630
-    // Servo2:  value_open = 1780
-    //          value_close = 1200
-    // Servo3:  value_open = 1380
-    //          value_close = 1760
-    buttonState = digitalRead(buttonPin);
-    while (buttonState == 0) // Taster nicht gedrückt
-    {
-        myservo0.writeMicroseconds(value_rest); // servo stromlos
-        myservo1.writeMicroseconds(value_rest);
-        buttonState = digitalRead(buttonPin);
-        buttonTest_display(value_rest, value_open, value_close, buttonState);
-    }
-    delay(1);                // sonst wird folgende while schleife iwie einmal übersprungen
-    while (buttonState != 0) // Taster gedrückt
-    {
-        myservo0.writeMicroseconds(value_close); // Greifer schließen
-        myservo1.writeMicroseconds(value_close);
-        buttonState = digitalRead(buttonPin);
-        buttonTest_display(value_rest, value_open, value_close, buttonState);
-    }
-    myservo0.writeMicroseconds(value_open); // Greifer öffnen
-    myservo1.writeMicroseconds(value_open);
-    delay(500);
-}
 
 // int getMicrosec(int servotyp, float percentage)
 // {
@@ -224,42 +179,42 @@ void buttonTest(int value_rest, int value_open, int value_close)
 //     delay(1000);
 // }
 
-// void verschleisstest()
-// {
-//     microsec = millis();
-//     minutes = microsec / 60000;
-//     buttonState = digitalRead(buttonPin);
-//     DrawStateDisplay();
-//     if (buttonState != gripperState)
-//     {
-//         failures++;
-//         if (failures > 2)
-//         {
-//             Serial.print("End Program ");
-//             gripperOpen();
-//             while (true) // Program stops at 3 failures
-//             {
-//                 myservo0.writeMicroseconds(1500);
-//                 myservo1.writeMicroseconds(1500);
-//             }
-//         }
-//     }
-//     delay(500);
+void verschleisstest()
+{
+    microsec = millis();
+    minutes = microsec / 60000;
+    buttonState = digitalRead(buttonPin);
+    DrawStateDisplay();
+    if (buttonState != gripperState)
+    {
+        failures++;
+        if (failures > 2)
+        {
+            Serial.print("End Program ");
+            gripperOpen();
+            while (true) // Program stops at 3 failures
+            {
+                myservo0.writeMicroseconds(1500);
+                myservo1.writeMicroseconds(1500);
+            }
+        }
+    }
+    delay(500);
 
-//     if (buttonState == 1) // Knopf gedrückt, Greifer geschlossen
-//     {
-//         gripperOpen();
-//         gripperState = 0;
-//     }
+    if (buttonState == 1) // Knopf gedrückt, Greifer geschlossen
+    {
+        gripperOpen();
+        gripperState = 0;
+    }
 
-//     if (buttonState == 0) // Knopf nicht gedrückt, Greifer offen
-//     {
-//         gripperClose();
-//         gripperState = 1;
-//         closings++;
-//         delay(10000); // closing time
-//     }
-// }
+    if (buttonState == 0) // Knopf nicht gedrückt, Greifer offen
+    {
+        gripperClose();
+        gripperState = 1;
+        closings++;
+        delay(10000); // closing time
+    }
+}
 
 void Vergleichstest()
 {
@@ -304,15 +259,41 @@ void Vergleichstest()
 }
 void loop()
 {
-    // Vergleichstest();
-    // buttonTest(1500, 1400, 1800); // servo0 ✓ (value_rest, value_open, value_close)
-    // buttonTest(1500, 1360, 1630); // servo1 ✓
-    // buttonTest(1500, 1810, 1200); // servo2 ✓
-    buttonTest(1500, 1380, 1760); // servo3
-    //
-    // gemessene Kraft: (in g)          -> Mittelwert
-    // servo0: 1: 660, 2: 650, 3: 700   -> 670
-    // servo1: 1: 415, 2: 600, 3: 570   -> 528,3
-    // servo2: 1: 700, 2: 600, 3: 670   -> 656,7
-    // servo3: 1: 530, 2: 560, 3: 550   -> 546,7
+    Vergleichstest();
+    /*
+    DrawStateDisplay();
+    gripperClose();
+    closings++;
+    delay(1000);
+    gripperOpen();
+    delay(1000);
+    */
+
+    // buttonPinTest
+    // DrawStateDisplay();
+    // buttonState = digitalRead(buttonPin);
+    // while (buttonState == 0) // Taster nicht gedrückt
+    // {
+    //     myservo0.writeMicroseconds(1500); // servo stromlos
+    //     myservo1.writeMicroseconds(1500);
+    //     myservo2.writeMicroseconds(1500);
+    //     myservo3.writeMicroseconds(1500);
+    //     Serial.println("open");
+    //     buttonState = digitalRead(buttonPin);
+    // }
+    // delay(1);                // sonst wird folgende while schleife iwie einmal übersprungen
+    // while (buttonState != 0) // Taster gedrückt
+    // {
+    //     myservo0.writeMicroseconds(1600);
+    //     myservo1.writeMicroseconds(1590);
+    //     myservo2.writeMicroseconds(1290);
+    //     myservo3.writeMicroseconds(1620);
+
+    //     Serial.println("close");
+    //     // Serial.println(setMicrosec);
+    //     buttonState = digitalRead(buttonPin);
+    // }
+    // myservo0.writeMicroseconds(1800);
+    // myservo1.writeMicroseconds(1800);
+    // delay(500);
 }
